@@ -58,7 +58,7 @@ export default Ember.ArrayProxy.extend(PageMixin, Ember.Evented, ArrayProxyPromi
 
   paramsForBackend: function() {
     var paramsObj = QueryParamsForBackend.create({page: this.getPage(),
-                                                  perPage: 20,
+                                                  perPage: 10,
                                                   paramMapping: this.get('paramMapping')});
     var ops = paramsObj.make();
 
@@ -73,7 +73,7 @@ export default Ember.ArrayProxy.extend(PageMixin, Ember.Evented, ArrayProxyPromi
     var modelName = this.get('modelName');
 
     var ops = this.get('paramsForBackend');
-    var res = store.find(modelName, ops);
+    var res = store.query?store.query(modelName, ops):store.find(modelName, ops) ;
 
     return res;
   },
@@ -84,7 +84,6 @@ export default Ember.ArrayProxy.extend(PageMixin, Ember.Evented, ArrayProxyPromi
     var me = this;
 
     res.then(function(rows) {
-      console.log('------------rows', rows);
       var metaObj = ChangeMeta.create({paramMapping: me.get('paramMapping'),
                                        meta: rows.meta,
                                        page: me.getPage(),
@@ -101,7 +100,7 @@ export default Ember.ArrayProxy.extend(PageMixin, Ember.Evented, ArrayProxyPromi
 
   // totalPagesBinding: "meta.total_pages",
   totalPages: Ember.computed('page', 'perPage', 'meta', function(){
-    return Math.round(parseInt(this.get('meta.count'))/parseInt(this.get('perPage')));
+    return Math.ceil(parseInt(this.get('meta.total_pages'))/parseInt(this.get('perPage')));
   }),
 
   pageChanged: function() {
