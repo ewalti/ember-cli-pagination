@@ -87,7 +87,7 @@ export default Ember.ArrayProxy.extend(PageMixin, Ember.Evented, ArrayProxyPromi
       var metaObj = ChangeMeta.create({paramMapping: me.get('paramMapping'),
                                        meta: rows.meta,
                                        page: me.getPage(),
-                                       perPage: 20});
+                                       perPage: me.get('perPage')});
 
       return me.set("meta", metaObj.make());
 
